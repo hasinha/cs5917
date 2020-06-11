@@ -1,10 +1,7 @@
 <html>
 <head>
-<title>Spring MVC Tutorial Series by Crunchify.com</title>
+<title>CS5917</title>
 <style type="text/css">
-body {
-	background-image: url('https://cdn.crunchify.com/bg.png');
-}
 </style>
 </head>
 <body>
