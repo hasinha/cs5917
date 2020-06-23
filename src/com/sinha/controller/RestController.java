@@ -61,7 +61,7 @@ public class RestController {
 			String line = reader.readLine();
 			while (null != line) {
 				logger.info("Read line: {}", line);
-				lines.add(reader.readLine());
+				lines.add(line);
 				line = reader.readLine();
 			}
 			reader.close();
