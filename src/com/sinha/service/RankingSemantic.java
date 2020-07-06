@@ -1,10 +1,8 @@
 package com.sinha.service;
 
-import java.util.List;
-
-import com.sinha.model.Argument;
+import com.sinha.model.ArgumentFramework;
 
 public interface RankingSemantic {
 
-	void generateRanks(List<Argument> arguments);
+	void generateRanks(ArgumentFramework af);
 }

@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.sinha.model.Argument;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sinha.model.ArgumentFramework;
 import com.sinha.service.ArgumentUtils;
 import com.sinha.service.ServiceFactory;
 
@@ -38,20 +40,23 @@ public class RestController {
 
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
 	public @ResponseBody String uploadFileHandler(@RequestParam(name = "file", required = false) MultipartFile file,
-			HttpServletResponse response) {
+			@RequestParam(name = "rankingSemantic") String rankingSemantic, HttpServletResponse response)
+			throws JsonProcessingException {
 
 		List<String> lines = new ArrayList<>();
 		if (file.isEmpty()) {
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			return "failed to upload ";
+			return "Failed";
 		}
 		try {
 			parseFile(file, response, lines);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-		List<Argument> arguments = ArgumentUtils.parseArguments(lines);
-		return "success";
+		ArgumentFramework af = ArgumentUtils.parseArguments(lines);
+		serviceFactory.getRankingSemantic(rankingSemantic).generateRanks(af);
+		ObjectMapper om = new ObjectMapper();
+		return om.writeValueAsString(af);
 	}
 
 	private void parseFile(MultipartFile file, HttpServletResponse response, List<String> lines) throws Exception {

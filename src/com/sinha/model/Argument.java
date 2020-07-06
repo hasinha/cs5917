@@ -1,22 +1,17 @@
 package com.sinha.model;
 
-import java.util.List;
-
 public class Argument {
 
 	private String label;
 
-	private List<Argument> attacks;
+	private float strengthValue;
 
-	private List<Argument> attackedBy;
+	private float newStrengthValue;
+
+	private String pathCountStr;
 
 	public Argument(String label) {
 		this.label = label;
-	}
-
-	@Override
-	public String toString() {
-		return "Argument [label=" + label + ", attacks=" + attacks + ", attackedBy=" + attackedBy + "]";
 	}
 
 	public String getLabel() {
@@ -27,19 +22,58 @@ public class Argument {
 		this.label = label;
 	}
 
-	public List<Argument> getAttacks() {
-		return attacks;
+	public float getStrengthValue() {
+		return strengthValue;
 	}
 
-	public void setAttacks(List<Argument> attacks) {
-		this.attacks = attacks;
+	public void setStrengthValue(float strengthValue) {
+		this.strengthValue = strengthValue;
 	}
 
-	public List<Argument> getAttackedBy() {
-		return attackedBy;
+	public float getNewStrengthValue() {
+		return newStrengthValue;
 	}
 
-	public void setAttackedBy(List<Argument> attackedBy) {
-		this.attackedBy = attackedBy;
+	public void setNewStrengthValue(float newStrengthValue) {
+		this.newStrengthValue = newStrengthValue;
 	}
+
+	public String getPathCountStr() {
+		return pathCountStr;
+	}
+
+	public void setPathCountStr(String pathCountStr) {
+		this.pathCountStr = pathCountStr;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Argument other = (Argument) obj;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Argument [label=" + label + ", strengthValue=" + strengthValue + "]";
+	}
+
 }

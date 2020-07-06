@@ -23,14 +23,27 @@ public class ServiceFactory {
 	@Autowired
 	private DiscussionBasedSemantic discussionSemantic;
 
+	@Autowired
+	private MeanBurdenBasedSemantics meanBurdenBasedSemantic;
+
+	@Autowired
+	private MinBurdenSemantic minBurdenSemantic;
+
+	@Autowired
+	private MeanCategoriser meanCategoriser;
+
 	@PostConstruct
 	private void postConstruct() {
 		rankingFactory = new HashMap<>();
 		rankingFactory.put("nhCat", nhCategoriser);
 		rankingFactory.put("discussion", discussionSemantic);
+		rankingFactory.put("meanBurden", meanBurdenBasedSemantic);
+		rankingFactory.put("minBurden", minBurdenSemantic);
+		rankingFactory.put("meanCat", meanCategoriser);
 	}
 
-	public Map<String, RankingSemantic> getRankingFactory() {
-		return rankingFactory;
+	public RankingSemantic getRankingSemantic(String semantic) {
+		logger.info("Returning ranking semantic for : {}", semantic);
+		return rankingFactory.get(semantic);
 	}
 }

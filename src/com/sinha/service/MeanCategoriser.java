@@ -14,15 +14,15 @@ import com.sinha.model.AttackRelation;
 import com.sinha.util.FloatComparator;
 
 @Service
-public class NhCatBasedSemantic implements RankingSemantic {
+public class MeanCategoriser implements RankingSemantic {
 
-	private static final Logger logger = LoggerFactory.getLogger(NhCatBasedSemantic.class);
+	private static final Logger logger = LoggerFactory.getLogger(MeanCategoriser.class);
 
 	private static final int MAX_CYCLES = 20;
 
 	@Override
 	public void generateRanks(ArgumentFramework af) {
-		logger.info("Generating Ranks using Nh Categoriser");
+		logger.info("Generating ranks using Mean Categoriser");
 		initializeStrengths(af.getArguments());
 		int i = 0;
 		while (i < MAX_CYCLES) {
@@ -52,7 +52,7 @@ public class NhCatBasedSemantic implements RankingSemantic {
 				attacked = true;
 				List<Float> strengths = relation.getAttackers().stream().map(s -> s.getStrengthValue())
 						.collect(Collectors.toList());
-				sum += ((float) strengths.stream().mapToDouble(s -> s).sum()) / strengths.size();
+				sum += Collections.min(strengths);
 			}
 		}
 		if (attacked) {
