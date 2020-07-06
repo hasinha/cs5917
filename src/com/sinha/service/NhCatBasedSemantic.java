@@ -52,7 +52,7 @@ public class NhCatBasedSemantic implements RankingSemantic {
 				attacked = true;
 				List<Float> strengths = relation.getAttackers().stream().map(s -> s.getStrengthValue())
 						.collect(Collectors.toList());
-				sum += ((float) strengths.stream().mapToDouble(s -> s).sum()) / strengths.size();
+				sum += Collections.min(strengths);
 			}
 		}
 		if (attacked) {

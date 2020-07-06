@@ -52,7 +52,7 @@ public class MeanCategoriser implements RankingSemantic {
 				attacked = true;
 				List<Float> strengths = relation.getAttackers().stream().map(s -> s.getStrengthValue())
 						.collect(Collectors.toList());
-				sum += Collections.min(strengths);
+				sum += ((float) strengths.stream().mapToDouble(s -> s).sum()) / strengths.size();
 			}
 		}
 		if (attacked) {
