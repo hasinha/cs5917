@@ -37,7 +37,15 @@ table, td, th {
 			<option value="meanCat">Mean Categoriser</option></select> <br /> <input
 			type="submit" value="Upload"> Upload
 	</form>
-	<canvas id="sitemap" width="1280" height="720"></canvas>
+	<div style='width: 100%; overflow: hidden; display: inline-block'>
+		<div style='display: table-row'>
+			<div style='width: 1280px; display: table-cell; float: left'>
+				<canvas id="sitemap" width="1280" height="720"></canvas>
+			</div>
+			<div style='display: table-cell; float: left' id='argumentTable'></div>
+			<div style='display: table-cell; float: right' id='attackTable'></div>
+		</div>
+	</div>
 	<div id="rankTable" hidden="true">
 		<label>Argument Rankings</label><br />
 	</div>

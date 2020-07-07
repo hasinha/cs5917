@@ -1,3 +1,4 @@
+var sys, clickedNode, theUI;
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';
@@ -8,7 +9,7 @@ function getRandomColor() {
 }
 
 function generate(af){
-		var theUI = {
+		theUI = {
 					nodes : {},
 					edges: {}
 		}
@@ -17,7 +18,7 @@ function generate(af){
 					color: 'red',
 					shape: 'dot',
 					alpha: 1,
-					label: value.label
+					label: 'Arg: ' + value.label,
 				}
 		})
 		
@@ -25,8 +26,8 @@ function generate(af){
 			theUI['nodes'][value.attackLabel] = {
 				color: 'blue',
 				shape: 'square',
-				alpha: 0.5,
-				label: value.attackLabel
+				alpha: 1,
+				label: 'Att: ' + value.attackLabel
 			};
 			
 			$.each(af.attackRelation, function(index, value){
@@ -34,7 +35,7 @@ function generate(af){
 				var genColor = getRandomColor();
 				formedObject[value.attacked.label] = {
 					directed: true,
-					weight: 3,
+					weight: 10,
 					color: genColor
 				};
 				theUI['edges'][value.attackLabel] = formedObject;
@@ -44,8 +45,8 @@ function generate(af){
 						theUI['edges'][value2] = {};
 					}
 					theUI['edges'][value2][value.attackLabel] = {
-						directed: true,
-						weight: 3,
+						directed: false,
+						weight: 5,
 						color: genColor
 					};
 				});
@@ -53,8 +54,53 @@ function generate(af){
 			
 		})
 		
-		var sys = arbor.ParticleSystem()
+		sys = arbor.ParticleSystem()
 	    sys.parameters({stiffness:900, repulsion:2000, gravity:true, dt:0.015})
 	    sys.renderer = Renderer("#sitemap")
 	    sys.graft(theUI)
 	}
+
+function checkNode(node, pt){
+	if (node.name == clickedNode){
+		node.data.color = 'red';
+	} else {
+		node.data.color = '#d3d3d3';
+	}
+}
+
+function checkEdge(edge, pt1, pt2){
+	if (edge.source.name == clickedNode){
+		edge.data.color = 'green';
+		edge.target.data.color = 'blue';
+	} else if (edge.target.name == clickedNode){
+		edge.data.color = 'red'
+		edge.source.data.color = 'red';
+	} else {
+		edge.data.color = '#d3d3d3';
+	}
+}	
+function highlightNode(data){
+	clickedNode = $(data).text();
+	sys.eachNode(checkNode);
+	sys.eachEdge(checkEdge);
+	sys.graft(theUI);
+}
+
+function checkAttEdge(edge, pt1, pt2){
+	if (edge.source.name == clickedNode) {
+		edge.data.color = 'red';
+		edge.target.data.color = 'blue';
+	} else if (edge.target.name == clickedNode) {
+		edge.data.color = 'green';
+		edge.source.data.color = 'green';
+	} else {
+		edge.data.color = '#d3d3d3';
+	}
+}
+
+function highlightAttack(data){
+	clickedNode = $(data).text();
+	sys.eachNode(checkNode);
+	sys.eachEdge(checkAttEdge);
+	sys.graft(theUI);
+}
