@@ -1,4 +1,6 @@
 <html>
+<link rel="icon" href='./resources/images/favicon.ico'
+	type="image/x-icon">
 <head>
 <title>CS5197 Project</title>
 <style>
@@ -18,6 +20,7 @@ table, td, th {
 <script src="./resources/js/arbor-renderer.js"></script>
 <script src="./resources/js/main.js"></script>
 <script src="./resources/js/events.js"></script>
+<script src="./resources/js/blockui.js"></script>
 </head>
 <body>
 	<br>

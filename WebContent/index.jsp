@@ -1,4 +1,6 @@
 <html>
+<link rel="icon" href='./resources/images/favicon.ico'
+	type="image/x-icon">
 <head>
 <title>CS5917</title>
 <style type="text/css">

@@ -2,6 +2,16 @@ $(document).ready(function(){
 	$('#canvasWidth').val($('#sitemap').attr('width'));
 	$('#canvasHeight').val($('#sitemap').attr('height'));
 	$('#form1').submit(function(e){
+		$.blockUI({ css: { 
+            border: 'none', 
+            padding: '15px', 
+            backgroundColor: '#000', 
+            '-webkit-border-radius': '10px', 
+            '-moz-border-radius': '10px', 
+            opacity: .5, 
+            color: '#fff' 
+        } }); 
+		$('#overlay').css("display", 'block');
 		$("#canvasWidth, #canvasHeight").attr('disabled', true);
 		$("#rankTable, #argumentTable, #attackTable, #extensionTable").empty();
 	    e.preventDefault();
@@ -64,7 +74,12 @@ $(document).ready(function(){
 					$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
 					$(this).css('background-color', 'red');
 				});
-	       }
+			setTimeout($.unblockUI, 1000);
+	       },
+			error: function(xhr, status, error){
+				$.unblockUI();
+				alert('Error occured');
+			}	
 		});
 	});
 	
