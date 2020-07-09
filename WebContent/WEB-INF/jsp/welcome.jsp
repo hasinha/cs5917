@@ -34,20 +34,25 @@ table, td, th {
 			<option value="discussion">Discussion Based</option>
 			<option value="meanBurden">Mean Burden Based</option>
 			<option value="minBurden">Min Burden Based</option>
-			<option value="meanCat">Mean Categoriser</option></select> <br /> <input
-			type="submit" value="Upload"> Upload
+			<option value="meanCat">Mean Categoriser</option></select> <label
+			style="margin-left: 75px">Select Extension Semantic</label> &nbsp <select
+			id="extensionSemantic" name="extensionSemantic"><option
+				value="prefExt">Preferred Extensions</option></select> &nbsp <input
+			type="submit" value="Submit" style="margin-left: 75px">
 	</form>
-	<div style='width: 100%; overflow: hidden; display: inline-block'>
-		<div style='display: table-row'>
-			<div style='width: 1280px; display: table-cell; float: left'>
-				<canvas id="sitemap" width="1280" height="720"></canvas>
-			</div>
-			<div style='display: table-cell; float: left' id='argumentTable'></div>
-			<div style='display: table-cell; float: right' id='attackTable'></div>
-		</div>
+	<div>
+		<label>Canvas Width: </label><input type="text" id="canvasWidth"
+			style="width: 40px"><label style="margin-left: 20px">Canvas
+			Height: </label> <input type="text" id="canvasHeight" style="width: 40px">
 	</div>
-	<div id="rankTable" hidden="true">
+	<canvas id="sitemap" width="1280" height="720"></canvas>
+	<div id="rankTable" hidden="true" style="padding: 20px">
 		<label>Argument Rankings</label><br />
+	</div>
+	<div style='padding: 20px' id='argumentTable'></div>
+	<div style='padding: 20px' id='attackTable'></div>
+	<div id="extensionTable" hidden="true" style="padding: 20px">
+		<label>Extensions</label>
 	</div>
 </body>
 </html>

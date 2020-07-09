@@ -78,7 +78,38 @@ function checkEdge(edge, pt1, pt2){
 	} else {
 		edge.data.color = '#d3d3d3';
 	}
-}	
+}
+
+function checkMultipleNodes(node, pt){
+	if ($.inArray(node.name, clickedNode) > -1) {
+		node.data.color='green';
+	} else {
+		node.data.color = '#d3d3d3';
+	}
+}
+
+function checkMultipleAttEdge(edge, pt1, pt2) {
+	if ($.inArray(edge.source.name, clickedNode) > -1) {
+		edge.data.color = 'blue';
+		edge.target.data.color = 'red';
+	} else {
+		edge.data.color = '#d3d3d3';
+	}
+}
+
+function uncheckMultipleNodes(node, pt){
+	if ($.inArray(node.name, clickedNode) > -1) {
+		node.data.color='red';
+	}
+}
+
+function uncheckMultipleAttEdge(edge, pt1, pt2) {
+	if ($.inArray(edge.target.name, clickedNode) > -1) {
+		edge.data.color = 'red';
+		edge.target.data.color = 'red';
+	}
+}
+
 function highlightNode(data){
 	clickedNode = $(data).text();
 	sys.eachNode(checkNode);
@@ -102,5 +133,17 @@ function highlightAttack(data){
 	clickedNode = $(data).text();
 	sys.eachNode(checkNode);
 	sys.eachEdge(checkAttEdge);
+	sys.graft(theUI);
+}
+
+function highlightExtension(row){
+	clickedNode = $(row).find('td.inArg').text().split(",");
+	sys.eachNode(checkMultipleNodes);
+	sys.eachEdge(checkMultipleAttEdge);
+	sys.graft(theUI);
+	
+	clickedNode = $(row).find('td.outArg').text().split(",");
+	sys.eachNode(uncheckMultipleNodes);
+	sys.eachEdge(uncheckMultipleAttEdge);
 	sys.graft(theUI);
 }

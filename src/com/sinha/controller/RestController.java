@@ -40,8 +40,9 @@ public class RestController {
 
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
 	public @ResponseBody String uploadFileHandler(@RequestParam(name = "file", required = false) MultipartFile file,
-			@RequestParam(name = "rankingSemantic") String rankingSemantic, HttpServletResponse response)
-			throws JsonProcessingException {
+			@RequestParam(name = "rankingSemantic") String rankingSemantic,
+			@RequestParam(name = "extensionSemantic") String extensionSemantic, HttpServletResponse response)
+			throws Exception {
 
 		List<String> lines = new ArrayList<>();
 		if (file.isEmpty()) {
@@ -55,6 +56,7 @@ public class RestController {
 		}
 		ArgumentFramework af = ArgumentUtils.parseArguments(lines);
 		serviceFactory.getRankingSemantic(rankingSemantic).generateRanks(af);
+		serviceFactory.getReasoningSemantic(extensionSemantic).generateLabelings(af);
 		ObjectMapper om = new ObjectMapper();
 		return om.writeValueAsString(af);
 	}
