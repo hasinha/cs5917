@@ -34,12 +34,34 @@ public class PreferredSemantic implements ReasoningSemantic {
 		Candidate candidate = new Candidate();
 		candidate.setUndecArguments(new HashSet<>(argList));
 		Set<Candidate> finalResults = new HashSet<>();
+		finalResults.add(candidate);
 		computeCandidates(candidate, af, finalResults);
 		Set<Candidate> candidatesToRemove = getCandidatesToRemove(finalResults);
+		filterEqInArgExtensions(finalResults);
 		for (Candidate cand : candidatesToRemove) {
 			finalResults.remove(cand);
 		}
 		af.setCandidates(new ArrayList<>(finalResults));
+	}
+
+	private void filterEqInArgExtensions(Set<Candidate> finalResults) {
+		Set<Candidate> toRemove = new HashSet<>();
+		for (Candidate cand1 : finalResults) {
+			for (Candidate cand2 : finalResults) {
+				if (cand1.equals(cand2)) {
+					continue;
+				}
+				if (cand1.getInArguments().equals(cand2.getInArguments())
+						&& (!CollectionUtils.isEmpty(cand1.getUndecArguments())
+								|| !CollectionUtils.isEmpty(cand2.getUndecArguments()))
+						&& cand1.getUndecArguments().containsAll(cand2.getUndecArguments())) {
+					toRemove.add(cand2);
+				}
+			}
+		}
+		for (Candidate cand : toRemove) {
+			finalResults.remove(cand);
+		}
 	}
 
 	private Set<Candidate> getCandidatesToRemove(Set<Candidate> finalResults) {
@@ -48,7 +70,7 @@ public class PreferredSemantic implements ReasoningSemantic {
 		boolean isNonEmptyCandidatePresent = Boolean.FALSE;
 		for (Candidate cand1 : finalResults) {
 			for (Candidate cand2 : finalResults) {
-				if (isNonEmptyCandidatePresent && (!CollectionUtils.isEmpty(cand1.getInArguments())
+				if (!isNonEmptyCandidatePresent && (!CollectionUtils.isEmpty(cand1.getInArguments())
 						|| !CollectionUtils.isEmpty(cand1.getInArguments()))) {
 					isNonEmptyCandidatePresent = Boolean.TRUE;
 				}
@@ -61,7 +83,9 @@ public class PreferredSemantic implements ReasoningSemantic {
 				if (cand1.equals(cand2)) {
 					continue;
 				}
-				if (cand2.getInArguments().containsAll(cand1.getInArguments())) {
+				if (!CollectionUtils.isEmpty(cand1.getInArguments()) && !CollectionUtils.isEmpty(cand2.getInArguments())
+						&& !cand2.getInArguments().equals(cand1.getInArguments())
+						&& cand2.getInArguments().containsAll(cand1.getInArguments())) {
 					candidatesToRemove.add(cand1);
 				}
 			}
