@@ -26,7 +26,7 @@ public class PreferredSemantic implements ReasoningSemantic {
 
 	private static final Logger logger = LoggerFactory.getLogger(PreferredSemantic.class);
 
-	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1600);
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(40);
 
 	@Override
 	public void generateLabelings(ArgumentFramework af) throws Exception {
