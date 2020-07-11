@@ -1,3 +1,4 @@
+var initDone = false; 
 $(document).ready(function(){
 	$('#canvasWidth').val($('#sitemap').attr('width'));
 	$('#canvasHeight').val($('#sitemap').attr('height'));
@@ -13,7 +14,7 @@ $(document).ready(function(){
         } }); 
 		$('#overlay').css("display", 'block');
 		$("#canvasWidth, #canvasHeight").attr('disabled', true);
-		$("#rankTable, #argumentTable, #attackTable, #extensionTable").empty();
+		$("#rankTable, #argumentTable, #attacksTable, #extensionsTable").empty();
 	    e.preventDefault();
 	    var url=$(this).closest('form').attr('action');
 	    $.ajax({
@@ -70,18 +71,21 @@ $(document).ready(function(){
 				generate(dataO);
 				
 				$("#buttonDiv").slideDown('fast');
-				$("#showRankings").click(function(){
-					$("#rankTable").slideToggle('fast');
-				})
-				$("#showArguments").click(function(){
-					$("#argumentTable").slideToggle('fast');
-				})
-				$("#showAttacks").click(function(){
-					$("#attacksTable").slideToggle('fast');
-				})
-				$("#showExtensions").click(function(){
-					$("#extensionsTable").slideToggle('fast');
-				})
+				if(!initDone){ 
+					$("#showRankings").click(function(){
+						$("#rankTable").slideToggle('fast');
+					})
+					$("#showArguments").click(function(){
+						$("#argumentTable").slideToggle('fast');
+					})
+					$("#showAttacks").click(function(){
+						$("#attacksTable").slideToggle('fast');
+					})
+					$("#showExtensions").click(function(){
+						$("#extensionsTable").slideToggle('fast');
+					})
+				}
+				initDone = true;
 			setTimeout($.unblockUI, 1000);
 	       },
 			error: function(xhr, status, error){
@@ -141,6 +145,7 @@ $(document).ready(function(){
 	
 	$("#canvasWidth").on('change', function(){
 		$("#sitemap").attr('width', $("#canvasWidth").val());
+		$("#mainDiv").css('width', parseInt($(this).val()) + 400);
 	})
 	
 	$("#canvasHeight").on('change', function(){

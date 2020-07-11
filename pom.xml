@@ -19,7 +19,7 @@
 			</plugin>
 			<plugin>
 				<configuration>
-					<appName>stormy-brook-62925</appName>
+					<appName>shubhra</appName>
 				</configuration>
 				<groupId>com.heroku.sdk</groupId>
 				<artifactId>heroku-maven-plugin</artifactId>

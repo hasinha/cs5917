@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.sinha.model.AttackRelation;
 import com.sinha.model.Candidate;
 
 public class ComputeCandidate implements Callable<List<Candidate>> {
+
+	private static final Logger logger = LoggerFactory.getLogger(ComputeCandidate.class);
 
 	private List<AttackRelation> attacks;
 
@@ -23,6 +28,7 @@ public class ComputeCandidate implements Callable<List<Candidate>> {
 
 	@Override
 	public List<Candidate> call() throws Exception {
+//		logger.info("Started thread");
 		List<Candidate> candidates = new ArrayList<>();
 		candidates.add(argumentAddition());
 		candidates.add(argumentRemoval());

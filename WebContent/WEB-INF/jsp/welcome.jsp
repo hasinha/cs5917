@@ -52,8 +52,9 @@ table, td, th {
 			style="width: 40px"><label style="margin-left: 20px">Canvas
 			Height: </label> <input type="text" id="canvasHeight" style="width: 40px">
 	</div>
-	<div style='width: 100%; overflow: hidden; display: inline-block'>
-		<div style='display: table-row'>
+	<div style='width: 1676px; overflow: auto; display: inline-block'
+		id="mainDiv">
+		<div style='display: table-row; overflow: auto'>
 			<div
 				style="margin-top: 20px; overflow: auto; width: 396px; height: 865px; display: table-cell; float: left"
 				hidden="true" id="buttonDiv">
@@ -69,7 +70,7 @@ table, td, th {
 				<div id='attacksTable' hidden="true" class="dispTable"></div>
 				<div id="extensionsTable" hidden="true" class="dispTable"></div>
 			</div>
-			<div style='display: table-cell; float: left'>
+			<div style='display: table-cell; float: left; overflow: auto'>
 				<canvas id="sitemap" width="1280" height="720"></canvas>
 			</div>
 		</div>

@@ -1,6 +1,7 @@
 package com.sinha.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +26,7 @@ public class PreferredSemantic implements ReasoningSemantic {
 
 	private static final Logger logger = LoggerFactory.getLogger(PreferredSemantic.class);
 
-	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(40);
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1600);
 
 	@Override
 	public void generateLabelings(ArgumentFramework af) throws Exception {
@@ -35,7 +36,7 @@ public class PreferredSemantic implements ReasoningSemantic {
 		candidate.setUndecArguments(new HashSet<>(argList));
 		Set<Candidate> finalResults = new HashSet<>();
 		finalResults.add(candidate);
-		computeCandidates(candidate, af, finalResults);
+		computeCandidates(new ArrayList<>(Arrays.asList(candidate)), af, finalResults);
 		Set<Candidate> candidatesToRemove = getCandidatesToRemove(finalResults);
 		filterEqInArgExtensions(finalResults);
 		for (Candidate cand : candidatesToRemove) {
@@ -65,26 +66,32 @@ public class PreferredSemantic implements ReasoningSemantic {
 	}
 
 	private Set<Candidate> getCandidatesToRemove(Set<Candidate> finalResults) {
+		long startTime = System.currentTimeMillis();
 		Set<Candidate> candidatesToRemove = new HashSet<>();
 		Set<Candidate> emptySetCandidates = new HashSet<>();
 		boolean isNonEmptyCandidatePresent = Boolean.FALSE;
 		for (Candidate cand1 : finalResults) {
 			for (Candidate cand2 : finalResults) {
+				boolean isEmptyInArg = Boolean.FALSE;
 				if (!isNonEmptyCandidatePresent && (!CollectionUtils.isEmpty(cand1.getInArguments())
 						|| !CollectionUtils.isEmpty(cand1.getInArguments()))) {
 					isNonEmptyCandidatePresent = Boolean.TRUE;
 				}
 				if (CollectionUtils.isEmpty(cand1.getInArguments())) {
+					isEmptyInArg = true;
 					emptySetCandidates.add(cand1);
 				}
 				if (CollectionUtils.isEmpty(cand2.getInArguments())) {
+					isEmptyInArg = true;
 					emptySetCandidates.add(cand2);
+				}
+				if (isEmptyInArg) {
+					continue;
 				}
 				if (cand1.equals(cand2)) {
 					continue;
 				}
-				if (!CollectionUtils.isEmpty(cand1.getInArguments()) && !CollectionUtils.isEmpty(cand2.getInArguments())
-						&& !cand2.getInArguments().equals(cand1.getInArguments())
+				if (!cand2.getInArguments().equals(cand1.getInArguments())
 						&& cand2.getInArguments().containsAll(cand1.getInArguments())) {
 					candidatesToRemove.add(cand1);
 				}
@@ -93,22 +100,32 @@ public class PreferredSemantic implements ReasoningSemantic {
 		if (isNonEmptyCandidatePresent) {
 			candidatesToRemove.addAll(emptySetCandidates);
 		}
+		long endTime = System.currentTimeMillis();
+		logger.info("Time Taken remove candidates: {}", (endTime - startTime));
 		return candidatesToRemove;
 	}
 
-	private void computeCandidates(Candidate candidate, ArgumentFramework af, Set<Candidate> finalResults)
+	private void computeCandidates(List<Candidate> candidates, ArgumentFramework af, Set<Candidate> finalResults)
 			throws Exception {
-		if (CollectionUtils.isEmpty(candidate.getUndecArguments())) {
-			return;
+		long startTime = System.currentTimeMillis();
+		List<Candidate> tempCandidates = new ArrayList<>();
+		List<Callable<List<Candidate>>> callables = new ArrayList<>();
+		for (Candidate cand : candidates) {
+			callables.add(prepareCallables(cand, af, new ArrayList<>(cand.getUndecArguments()).get(0)));
 		}
-		Callable<List<Candidate>> callables = prepareCallables(candidate, af,
-				new ArrayList<>(candidate.getUndecArguments()).get(0));
 		List<Candidate> prospects = performTask(callables, EXECUTOR);
 		for (Candidate cand : prospects) {
 			if (isConflictFree(cand, af) && isAdmissible(cand, af)) {
 				finalResults.add(cand);
 			}
-			computeCandidates(cand, af, finalResults);
+			if (!CollectionUtils.isEmpty(cand.getUndecArguments())) {
+				tempCandidates.add(cand);
+			}
+		}
+		long endTime = System.currentTimeMillis();
+		logger.info("Cycle Time Taken: {}, Candidate Count: {}", (endTime - startTime), tempCandidates.size());
+		if (!CollectionUtils.isEmpty(tempCandidates)) {
+			computeCandidates(tempCandidates, af, finalResults);
 		}
 	}
 
@@ -151,14 +168,20 @@ public class PreferredSemantic implements ReasoningSemantic {
 		return Boolean.TRUE;
 	}
 
-	private List<Candidate> performTask(Callable<List<Candidate>> callable, ExecutorService executor) throws Exception {
+	private List<Candidate> performTask(List<Callable<List<Candidate>>> callables, ExecutorService executor)
+			throws Exception {
 		List<Candidate> results = new ArrayList<>();
-		Future<List<Candidate>> future = executor.submit(callable);
-		try {
-			results.addAll(future.get());
-		} catch (Exception e) {
-			logger.error("Exception getting result: ", e);
-			throw new Exception("FutureException");
+		List<Future<List<Candidate>>> futures = new ArrayList<>();
+		for (Callable<List<Candidate>> callable : callables) {
+			futures.add(executor.submit(callable));
+		}
+		for (Future<List<Candidate>> future : futures) {
+			try {
+				results.addAll(future.get());
+			} catch (Exception e) {
+				logger.error("Exception getting result: ", e);
+				throw new Exception("FutureException");
+			}
 		}
 		return results;
 	}
