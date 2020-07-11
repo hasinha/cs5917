@@ -24,29 +24,28 @@ $(document).ready(function(){
 	        contentType: false,
 	        success:function(data){
 				dataO = JSON.parse(data);
-				console.log(dataO);
-				var table = $('<table>');
+				var rankingTable = $('<table>');
 				var row = $('<tr>');
-				var argTable = $('<table>');
+				var argumentsTable = $('<table>');
 				var argRow = $('<tr>');
 				var th = $('<th>').text('Arguments');
 				var rankTh = $('<th>').text('Rank');
 				var i = 1;
 				argRow.append(th);
 				argRow.append(rankTh);
-				argTable.append(argRow);
+				argumentsTable.append(argRow);
 				$.each(dataO.arguments, function(index, value){
 					var newRow = $('<tr>');
 					var newTd = $('<td>').text(value.label).attr('class', 'argClick');
 					var rankTd = $('<td>').text(i);
 					newRow.append(newTd);
 					newRow.append(rankTd);
-					argTable.append(newRow);
+					argumentsTable.append(newRow);
 					var th = $('<th>').text(value.label);
 					row.append(th);
 					i++;
 				})
-				table.append(row);
+				rankingTable.append(row);
 				var row2 = $('<tr>');
 				$.each(dataO.arguments, function(index, value){
 					if ($('#rankingSemantic').val() == 'discussion' || $('#rankingSemantic').val() == 'meanBurden' || $('#rankingSemantic').val() == 'minBurden'){
@@ -56,24 +55,33 @@ $(document).ready(function(){
 					}
 					row2.append(td);
 				})
-				table.append(row2);
+				rankingTable.append(row2);
 				var label = $('#rankingSemantic>option:selected').text();
-				$("#rankTable").append(label);
-				$("#rankTable").append(table);
-				$("#rankTable").attr('hidden', false);
-				$("#argumentTable").append($('<label>').text('Arguments'));
-				$('#argumentTable').append(argTable);
-				$('#argumentTable').attr('hidden', false);
-				populateAttacks(dataO.attackRelation);
-				populateExtensions(dataO.candidates);
-				
-				generate(dataO);
-				
+				$("#rankTable").append(rankingTable);
+				$('#argumentTable').append(argumentsTable);
 				$('.argClick').click(function(){
 					highlightNode(this);
 					$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
 					$(this).css('background-color', 'red');
 				});
+				populateAttacks(dataO.attackRelation);
+				populateExtensions(dataO.candidates);
+				
+				generate(dataO);
+				
+				$("#buttonDiv").slideDown('fast');
+				$("#showRankings").click(function(){
+					$("#rankTable").slideToggle('fast');
+				})
+				$("#showArguments").click(function(){
+					$("#argumentTable").slideToggle('fast');
+				})
+				$("#showAttacks").click(function(){
+					$("#attacksTable").slideToggle('fast');
+				})
+				$("#showExtensions").click(function(){
+					$("#extensionsTable").slideToggle('fast');
+				})
 			setTimeout($.unblockUI, 1000);
 	       },
 			error: function(xhr, status, error){
@@ -84,23 +92,22 @@ $(document).ready(function(){
 	});
 	
 	function populateAttacks(attacks){
-		var attTable = $('<table>');
+		var attacksTable = $('<table>');
 		var row = $('<tr>');
 		var labelTh = $('<th>').text('Attack Label');
 		var membersTh = $('<th>').text('Members');
 		var attackedTh = $('<th>').text('Attacked');
 		row.append(labelTh).append(membersTh).append(attackedTh);
-		attTable.append(row);
+		attacksTable.append(row);
 		$.each(attacks, function(index, value){
 			var newRow = $('<tr>');
 			var labelTd = $('<td>').text(value.attackLabel).attr('class', 'attClick');
 			var memberTd = $('<td>').text(value.attackMembers);
 			var attackedTd = $('<td>').text(value.attacked.label);
 			newRow.append(labelTd).append(memberTd).append(attackedTd);
-			attTable.append(newRow);
+			attacksTable.append(newRow);
 		})
-		$('#attackTable').append($('<label>').text('Attacks'));
-		$('#attackTable').append(attTable);
+		$('#attacksTable').append(attacksTable);
 		$('.attClick').click(function(){
 			highlightAttack(this);
 			$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
@@ -109,22 +116,22 @@ $(document).ready(function(){
 	}
 	
 	function populateExtensions(candidates){
-		var extTable = $('<table>');
+		var extensionsTable = $('<table>');
 		var row = $('<tr>');
 		var inTh = $('<th>').text('IN');
 		var outTh = $('<th>').text('OUT');
 		var undecTh = $('<th>').text('UNDEC');
 		row.append(inTh).append(outTh).append(undecTh);
-		extTable.append(row)
+		extensionsTable.append(row)
 		$.each(candidates, function(index, value){
 			var newRow = $('<tr>').attr('class', 'extClick');
 			var inTd = $('<td>').text(value.inArguments).attr('class', 'inArg');
 			var outTd = $('<td>').text(value.outArguments).attr('class', 'outArg');
 			var undecTd = $('<td>').text(value.undecArguments).attr('class', 'undecArg');
 			newRow.append(inTd).append(outTd).append(undecTd);
-			extTable.append(newRow);
+			extensionsTable.append(newRow);
 		});
-		$('#extensionTable').append(extTable).attr('hidden', false);
+		$('#extensionsTable').append(extensionsTable);
 		$('.extClick').click(function(){
 			highlightExtension(this);
 			$('.extClick td.inArg, .argClick, .attClick').css('background-color', '#e5e5e5');

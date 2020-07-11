@@ -1,4 +1,4 @@
-var sys, clickedNode, theUI;
+var sys, clickedNode, theUI, tempTable;
 function getRandomColor() {
   var letters = '0123456789ABCDEF';
   var color = '#';

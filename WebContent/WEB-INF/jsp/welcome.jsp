@@ -11,6 +11,10 @@ table, td, th {
 	background-color: #e5e5e5;
 	text-align: center;
 }
+
+.dispTable {
+	margin-top: 20px;
+}
 </style>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -48,14 +52,27 @@ table, td, th {
 			style="width: 40px"><label style="margin-left: 20px">Canvas
 			Height: </label> <input type="text" id="canvasHeight" style="width: 40px">
 	</div>
-	<canvas id="sitemap" width="1280" height="720"></canvas>
-	<div id="rankTable" hidden="true" style="padding: 20px">
-		<label>Argument Rankings</label><br />
-	</div>
-	<div style='padding: 20px' id='argumentTable'></div>
-	<div style='padding: 20px' id='attackTable'></div>
-	<div id="extensionTable" hidden="true" style="padding: 20px">
-		<label>Extensions</label>
+	<div style='width: 100%; overflow: hidden; display: inline-block'>
+		<div style='display: table-row'>
+			<div
+				style="margin-top: 20px; overflow: auto; width: 396px; height: 865px; display: table-cell; float: left"
+				hidden="true" id="buttonDiv">
+				<input id="showRankings" class="showRankings" value="Rankings"
+					type="button"> <input id="showArguments"
+					class="showArguments" style="margin-left: 20px" value="Arguments"
+					type="button"> <input id="showAttacks" class="showAttacks"
+					style="margin-left: 20px" type="button" value="Attacks"> <input
+					id="showExtensions" type="button" class="showExtensions"
+					style="margin-left: 20px" value="Extensions">
+				<div id="rankTable" hidden="true" class="dispTable"></div>
+				<div id='argumentTable' hidden="true" class="dispTable"></div>
+				<div id='attacksTable' hidden="true" class="dispTable"></div>
+				<div id="extensionsTable" hidden="true" class="dispTable"></div>
+			</div>
+			<div style='display: table-cell; float: left'>
+				<canvas id="sitemap" width="1280" height="720"></canvas>
+			</div>
+		</div>
 	</div>
 </body>
 </html>
