@@ -121,7 +121,7 @@ $(document).ready(function(){
 			uid = data;
 		}
 	})).then(function() {
-		var socket = new SockJS('./chat');
+		var socket = new SockJS('/chat');
                 stompClient = Stomp.over(socket);  
                 stompClient.connect({}, function(frame) {
                     console.log('Connected: ' + frame);

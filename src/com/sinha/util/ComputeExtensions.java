@@ -22,7 +22,7 @@ import com.sinha.model.Candidate;
 
 public class ComputeExtensions implements Runnable {
 
-	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(140);
+	private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(40);
 
 	private static final Logger logger = LoggerFactory.getLogger(ComputeExtensions.class);
 

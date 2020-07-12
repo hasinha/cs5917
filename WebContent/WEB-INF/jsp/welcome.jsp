@@ -26,7 +26,7 @@ table, td, th {
 <script src="./resources/js/events.js"></script>
 <script src="./resources/js/blockui.js"></script>
 <script src="./resources/js/stomp.js"></script>
-<script src="./resources/js/sockjs.js"></script>
+<script src="./resources/js/sockjs-1.0.0.min.js"></script>
 </head>
 <body>
 	<br>
