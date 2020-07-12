@@ -43,6 +43,7 @@ public class ComputeExtensions implements Runnable {
 
 	@Override
 	public void run() {
+		long startTime = System.currentTimeMillis();
 		Set<Candidate> finalResults = new HashSet<>();
 		finalResults.add(candidate);
 		try {
@@ -57,6 +58,8 @@ public class ComputeExtensions implements Runnable {
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
+		long endTime = System.currentTimeMillis();
+		logger.info("Time taken: {}", (endTime - startTime));
 	}
 
 	private void computeCandidates(List<Candidate> candidates, ArgumentFramework af, Set<Candidate> finalResults)

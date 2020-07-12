@@ -4,6 +4,10 @@
 <head>
 <title>CS5917 Project</title>
 <style>
+body {
+	background-image: url('./resources/images/bg.png');
+}
+
 table, td, th {
 	padding: 10px;
 	border: 2px solid #1c87c9;

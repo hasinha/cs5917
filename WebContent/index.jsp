@@ -4,6 +4,9 @@
 <head>
 <title>CS5917</title>
 <style type="text/css">
+body {
+	background-image: url('./resources/images/bg.png');
+}
 </style>
 </head>
 <body>
