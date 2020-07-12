@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinha.model.ArgumentFramework;
 import com.sinha.service.ArgumentUtils;
 import com.sinha.service.ServiceFactory;
@@ -40,8 +40,8 @@ public class RestController {
 	@RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
 	public @ResponseBody String uploadFileHandler(@RequestParam(name = "file", required = false) MultipartFile file,
 			@RequestParam(name = "rankingSemantic") String rankingSemantic,
-			@RequestParam(name = "extensionSemantic") String extensionSemantic, HttpServletResponse response)
-			throws Exception {
+			@RequestParam(name = "extensionSemantic") String extensionSemantic, @RequestParam(name = "uid") String uid,
+			HttpServletResponse response) throws Exception {
 
 		List<String> lines = new ArrayList<>();
 		if (file.isEmpty()) {
@@ -55,9 +55,10 @@ public class RestController {
 		}
 		ArgumentFramework af = ArgumentUtils.parseArguments(lines);
 		serviceFactory.getRankingSemantic(rankingSemantic).generateRanks(af);
-		serviceFactory.getReasoningSemantic(extensionSemantic).generateLabelings(af);
-		ObjectMapper om = new ObjectMapper();
-		return om.writeValueAsString(af);
+		serviceFactory.getReasoningSemantic(extensionSemantic).generateLabelings(af, uid);
+//		ObjectMapper om = new ObjectMapper();
+		response.setStatus(HttpStatus.CREATED.value());
+		return "success";
 	}
 
 	private void parseFile(MultipartFile file, HttpServletResponse response, List<String> lines) throws Exception {
@@ -82,9 +83,8 @@ public class RestController {
 		}
 	}
 
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	@RequestMapping(value = "/getUid", method = RequestMethod.GET)
 	public @ResponseBody String testStr() {
-		logger.info("Test");
-		return "123";
+		return UUID.randomUUID().toString();
 	}
 }

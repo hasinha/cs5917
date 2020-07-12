@@ -1,30 +1,55 @@
-var initDone = false; 
-$(document).ready(function(){
-	$('#canvasWidth').val($('#sitemap').attr('width'));
-	$('#canvasHeight').val($('#sitemap').attr('height'));
-	$('#form1').submit(function(e){
-		$.blockUI({ css: { 
-            border: 'none', 
-            padding: '15px', 
-            backgroundColor: '#000', 
-            '-webkit-border-radius': '10px', 
-            '-moz-border-radius': '10px', 
-            opacity: .5, 
-            color: '#fff' 
-        } }); 
-		$('#overlay').css("display", 'block');
-		$("#canvasWidth, #canvasHeight").attr('disabled', true);
-		$("#rankTable, #argumentTable, #attacksTable, #extensionsTable").empty();
-	    e.preventDefault();
-	    var url=$(this).closest('form').attr('action');
-	    $.ajax({
-	        url:url,
-	        type:'post',
-	        data: new FormData($('#form1')[0]),
-	        processData: false,
-	        contentType: false,
-	        success:function(data){
-				dataO = JSON.parse(data);
+var initDone = false, uid;
+
+	function populateAttacks(attacks){
+		var attacksTable = $('<table>');
+		var row = $('<tr>');
+		var labelTh = $('<th>').text('Attack Label');
+		var membersTh = $('<th>').text('Members');
+		var attackedTh = $('<th>').text('Attacked');
+		row.append(labelTh).append(membersTh).append(attackedTh);
+		attacksTable.append(row);
+		$.each(attacks, function(index, value){
+			var newRow = $('<tr>');
+			var labelTd = $('<td>').text(value.attackLabel).attr('class', 'attClick');
+			var memberTd = $('<td>').text(value.attackMembers);
+			var attackedTd = $('<td>').text(value.attacked.label);
+			newRow.append(labelTd).append(memberTd).append(attackedTd);
+			attacksTable.append(newRow);
+		})
+		$('#attacksTable').append(attacksTable);
+		$('.attClick').click(function(){
+			highlightAttack(this);
+			$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
+			$(this).css('background-color', 'red');
+		})
+	}
+	
+	function populateExtensions(candidates){
+		var extensionsTable = $('<table>');
+		var row = $('<tr>');
+		var inTh = $('<th>').text('IN');
+		var outTh = $('<th>').text('OUT');
+		var undecTh = $('<th>').text('UNDEC');
+		row.append(inTh).append(outTh).append(undecTh);
+		extensionsTable.append(row)
+		$.each(candidates, function(index, value){
+			var newRow = $('<tr>').attr('class', 'extClick');
+			var inTd = $('<td>').text(value.inArguments).attr('class', 'inArg');
+			var outTd = $('<td>').text(value.outArguments).attr('class', 'outArg');
+			var undecTd = $('<td>').text(value.undecArguments).attr('class', 'undecArg');
+			newRow.append(inTd).append(outTd).append(undecTd);
+			extensionsTable.append(newRow);
+		});
+		$('#extensionsTable').append(extensionsTable);
+		$('.extClick').click(function(){
+			highlightExtension(this);
+			$('.extClick td.inArg, .argClick, .attClick').css('background-color', '#e5e5e5');
+			$(this).find('td.inArg').css('background-color', 'red');
+		})
+	}
+
+function populateThings(data){
+	dataO = JSON.parse(data);
 				var rankingTable = $('<table>');
 				var row = $('<tr>');
 				var argumentsTable = $('<table>');
@@ -87,6 +112,52 @@ $(document).ready(function(){
 				}
 				initDone = true;
 			setTimeout($.unblockUI, 1000);
+} 
+$(document).ready(function(){
+	$.when($.ajax({
+		url: 'rest/getUid',
+		type: 'get',
+		success: function(data){
+			uid = data;
+		}
+	})).then(function() {
+		var socket = new SockJS('./chat');
+                stompClient = Stomp.over(socket);  
+                stompClient.connect({}, function(frame) {
+                    console.log('Connected: ' + frame);
+                    stompClient.subscribe('/topic/' + uid, function(messageOutput) {
+						populateThings(messageOutput.body);
+                    });
+                });
+	})
+
+	$('#canvasWidth').val($('#sitemap').attr('width'));
+	$('#canvasHeight').val($('#sitemap').attr('height'));
+	$('#form1').submit(function(e){
+		$.blockUI({ css: { 
+            border: 'none', 
+            padding: '15px', 
+            backgroundColor: '#000', 
+            '-webkit-border-radius': '10px', 
+            '-moz-border-radius': '10px', 
+            opacity: .5, 
+            color: '#fff' 
+        } }); 
+		$('#overlay').css("display", 'block');
+		$("#canvasWidth, #canvasHeight").attr('disabled', true);
+		$("#rankTable, #argumentTable, #attacksTable, #extensionsTable").empty();
+	    e.preventDefault();
+	    var url=$(this).closest('form').attr('action');
+		var formData = new FormData($('#form1')[0])
+		formData.append("uid", uid);
+	    $.ajax({
+	        url:url,
+	        type:'post',
+	        data: formData,
+	        processData: false,
+	        contentType: false,
+	        success:function(data){
+				console.log("Form Uploaded");
 	       },
 			error: function(xhr, status, error){
 				$.unblockUI();
@@ -94,54 +165,6 @@ $(document).ready(function(){
 			}	
 		});
 	});
-	
-	function populateAttacks(attacks){
-		var attacksTable = $('<table>');
-		var row = $('<tr>');
-		var labelTh = $('<th>').text('Attack Label');
-		var membersTh = $('<th>').text('Members');
-		var attackedTh = $('<th>').text('Attacked');
-		row.append(labelTh).append(membersTh).append(attackedTh);
-		attacksTable.append(row);
-		$.each(attacks, function(index, value){
-			var newRow = $('<tr>');
-			var labelTd = $('<td>').text(value.attackLabel).attr('class', 'attClick');
-			var memberTd = $('<td>').text(value.attackMembers);
-			var attackedTd = $('<td>').text(value.attacked.label);
-			newRow.append(labelTd).append(memberTd).append(attackedTd);
-			attacksTable.append(newRow);
-		})
-		$('#attacksTable').append(attacksTable);
-		$('.attClick').click(function(){
-			highlightAttack(this);
-			$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
-			$(this).css('background-color', 'red');
-		})
-	}
-	
-	function populateExtensions(candidates){
-		var extensionsTable = $('<table>');
-		var row = $('<tr>');
-		var inTh = $('<th>').text('IN');
-		var outTh = $('<th>').text('OUT');
-		var undecTh = $('<th>').text('UNDEC');
-		row.append(inTh).append(outTh).append(undecTh);
-		extensionsTable.append(row)
-		$.each(candidates, function(index, value){
-			var newRow = $('<tr>').attr('class', 'extClick');
-			var inTd = $('<td>').text(value.inArguments).attr('class', 'inArg');
-			var outTd = $('<td>').text(value.outArguments).attr('class', 'outArg');
-			var undecTd = $('<td>').text(value.undecArguments).attr('class', 'undecArg');
-			newRow.append(inTd).append(outTd).append(undecTd);
-			extensionsTable.append(newRow);
-		});
-		$('#extensionsTable').append(extensionsTable);
-		$('.extClick').click(function(){
-			highlightExtension(this);
-			$('.extClick td.inArg, .argClick, .attClick').css('background-color', '#e5e5e5');
-			$(this).find('td.inArg').css('background-color', 'red');
-		})
-	}
 	
 	$("#canvasWidth").on('change', function(){
 		$("#sitemap").attr('width', $("#canvasWidth").val());

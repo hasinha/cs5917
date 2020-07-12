@@ -2,7 +2,7 @@
 <link rel="icon" href='./resources/images/favicon.ico'
 	type="image/x-icon">
 <head>
-<title>CS5197 Project</title>
+<title>CS5917 Project</title>
 <style>
 table, td, th {
 	padding: 10px;
@@ -25,6 +25,8 @@ table, td, th {
 <script src="./resources/js/main.js"></script>
 <script src="./resources/js/events.js"></script>
 <script src="./resources/js/blockui.js"></script>
+<script src="./resources/js/stomp.js"></script>
+<script src="./resources/js/sockjs.js"></script>
 </head>
 <body>
 	<br>
