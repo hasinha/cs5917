@@ -34,6 +34,8 @@ public class ComputeExtensions implements Runnable {
 
 	private String userId;
 
+	private Candidate admissibileSet = null;
+
 	public ComputeExtensions(ArgumentFramework af, Candidate candidate, SimpMessagingTemplate template, String userId) {
 		this.af = af;
 		this.candidate = candidate;
@@ -48,7 +50,7 @@ public class ComputeExtensions implements Runnable {
 		finalResults.add(candidate);
 		try {
 			computeCandidates(new ArrayList<>(Arrays.asList(candidate)), af, finalResults);
-			Set<Candidate> candidatesToRemove = getCandidatesToRemove(finalResults);
+			List<Candidate> candidatesToRemove = getCandidatesToRemove(finalResults);
 			filterEqInArgExtensions(finalResults);
 			for (Candidate cand : candidatesToRemove) {
 				finalResults.remove(cand);
@@ -72,7 +74,24 @@ public class ComputeExtensions implements Runnable {
 		}
 		List<Candidate> prospects = performTask(callables, EXECUTOR);
 		for (Candidate cand : prospects) {
-			if (isConflictFree(cand, af) && isAdmissible(cand, af)) {
+			boolean adm = isAdmissible(cand, af);
+			boolean cf = isConflictFree(cand, af);
+			if (adm) {
+				if (null == this.admissibileSet) {
+					this.admissibileSet = cand;
+				} else {
+					List<String> unionArgs = new ArrayList<>(cand.getInArguments());
+					unionArgs.addAll(cand.getUndecArguments());
+					if (cand.getInArguments().containsAll(this.admissibileSet.getInArguments())
+							&& !cand.getInArguments().equals(this.admissibileSet.getInArguments())) {
+						this.admissibileSet = cand;
+					} else if (this.admissibileSet.getInArguments().containsAll(unionArgs)
+							&& !this.admissibileSet.getInArguments().equals(new HashSet<>(unionArgs))) {
+						continue;
+					}
+				}
+			}
+			if (cf && adm) {
 				finalResults.add(cand);
 			}
 			if (!CollectionUtils.isEmpty(cand.getUndecArguments())) {
@@ -87,7 +106,7 @@ public class ComputeExtensions implements Runnable {
 	}
 
 	private void filterEqInArgExtensions(Set<Candidate> finalResults) {
-		Set<Candidate> toRemove = new HashSet<>();
+		List<Candidate> toRemove = new ArrayList<>();
 		for (Candidate cand1 : finalResults) {
 			for (Candidate cand2 : finalResults) {
 				if (cand1.equals(cand2)) {
@@ -106,23 +125,25 @@ public class ComputeExtensions implements Runnable {
 		}
 	}
 
-	private Set<Candidate> getCandidatesToRemove(Set<Candidate> finalResults) {
+	private List<Candidate> getCandidatesToRemove(Set<Candidate> finalResults) {
+		logger.info("FinalResults size: {}", finalResults.size());
 		long startTime = System.currentTimeMillis();
-		Set<Candidate> candidatesToRemove = new HashSet<>();
-		Set<Candidate> emptySetCandidates = new HashSet<>();
+		List<Candidate> candidatesToRemove = new ArrayList<>();
+		List<Candidate> emptySetCandidates = new ArrayList<>();
 		boolean isNonEmptyCandidatePresent = Boolean.FALSE;
 		for (Candidate cand1 : finalResults) {
 			for (Candidate cand2 : finalResults) {
 				boolean isEmptyInArg = Boolean.FALSE;
-				if (!isNonEmptyCandidatePresent && (!CollectionUtils.isEmpty(cand1.getInArguments())
-						|| !CollectionUtils.isEmpty(cand1.getInArguments()))) {
+				boolean cand1Empty = CollectionUtils.isEmpty(cand1.getInArguments());
+				boolean cand2Empty = CollectionUtils.isEmpty(cand2.getInArguments());
+				if (!isNonEmptyCandidatePresent && (!cand1Empty || !cand2Empty)) {
 					isNonEmptyCandidatePresent = Boolean.TRUE;
 				}
-				if (CollectionUtils.isEmpty(cand1.getInArguments())) {
+				if (cand1Empty) {
 					isEmptyInArg = true;
 					emptySetCandidates.add(cand1);
 				}
-				if (CollectionUtils.isEmpty(cand2.getInArguments())) {
+				if (cand2Empty) {
 					isEmptyInArg = true;
 					emptySetCandidates.add(cand2);
 				}
@@ -138,6 +159,7 @@ public class ComputeExtensions implements Runnable {
 				}
 			}
 		}
+		logger.info("Time Taken: {}", (System.currentTimeMillis() - startTime));
 		if (isNonEmptyCandidatePresent) {
 			candidatesToRemove.addAll(emptySetCandidates);
 		}

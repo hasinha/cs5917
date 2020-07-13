@@ -1,11 +1,14 @@
 package com.sinha.util;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
 
 import com.sinha.model.AttackRelation;
 import com.sinha.model.Candidate;
@@ -30,9 +33,37 @@ public class ComputeCandidate implements Callable<List<Candidate>> {
 	public List<Candidate> call() throws Exception {
 //		logger.info("Started thread");
 		List<Candidate> candidates = new ArrayList<>();
-		candidates.add(argumentAddition());
+		if (checkForAddition()) {
+			candidates.add(argumentAddition());
+		}
 		candidates.add(argumentRemoval());
 		return candidates;
+	}
+
+	private boolean checkForAddition() {
+		Set<String> argAttackers = new HashSet<>();
+		for (AttackRelation attack : attacks) {
+			if (attack.getAttacked().getLabel().equals(this.argToAdd)) {
+				argAttackers.addAll(attack.getAttackMembers());
+			}
+		}
+		if (CollectionUtils.isEmpty(argAttackers)) {
+			return true;
+		}
+		boolean returnVal = false;
+		for (String attacker : argAttackers) {
+			for (AttackRelation attack : attacks) {
+				if (attack.getAttacked().getLabel().equals(attacker)) {
+					List<String> newList = new ArrayList<>(attack.getAttackMembers());
+					newList.retainAll(this.candidate.getOutArguments());
+					if (CollectionUtils.isEmpty(newList)) {
+						returnVal = true;
+						break;
+					}
+				}
+			}
+		}
+		return returnVal;
 	}
 
 	private Candidate argumentAddition() {
