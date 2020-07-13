@@ -58,6 +58,8 @@ function populateThings(data){
 				var rankTh = $('<th>').text('Rank');
 				var i = 1;
 				argRow.append(th);
+				row.append($('<th>').text('Argument')).append($('<th>').text('Strength'));
+				rankingTable.append(row);
 				argRow.append(rankTh);
 				argumentsTable.append(argRow);
 				$.each(dataO.arguments, function(index, value){
@@ -67,21 +69,19 @@ function populateThings(data){
 					newRow.append(newTd);
 					newRow.append(rankTd);
 					argumentsTable.append(newRow);
-					var th = $('<th>').text(value.label);
-					row.append(th);
+					var newRow2 = $('<tr>');
+					var newTd2 = $("<td>").text(value.label);
+					var strengthTd = $("<td>");
+					if ($('#rankingSemantic').val() == 'discussion' || $('#rankingSemantic').val() == 'meanBurden' || $('#rankingSemantic').val() == 'minBurden'){
+						strengthTd.text(value.pathCountStr);
+					} else if($('#rankingSemantic').val() == 'nhCat' || $('#rankingSemantic').val() == 'meanCat'){
+						strengthTd.text(value.strengthValue);
+					}
+					newRow2.append(newTd2);
+					newRow2.append(strengthTd);
+					rankingTable.append(newRow2);
 					i++;
 				})
-				rankingTable.append(row);
-				var row2 = $('<tr>');
-				$.each(dataO.arguments, function(index, value){
-					if ($('#rankingSemantic').val() == 'discussion' || $('#rankingSemantic').val() == 'meanBurden' || $('#rankingSemantic').val() == 'minBurden'){
-						var td = $('<td>').text(value.pathCountStr);
-					} else if($('#rankingSemantic').val() == 'nhCat' || $('#rankingSemantic').val() == 'meanCat'){
-						var td = $('<td>').text(value.strengthValue);
-					}
-					row2.append(td);
-				})
-				rankingTable.append(row2);
 				var label = $('#rankingSemantic>option:selected').text();
 				$("#rankTable").append(rankingTable);
 				$('#argumentTable').append(argumentsTable);
