@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,8 +70,9 @@ public class ComputeExtensions implements Runnable {
 		long startTime = System.currentTimeMillis();
 		List<Candidate> tempCandidates = new ArrayList<>();
 		List<Callable<List<Candidate>>> callables = new ArrayList<>();
+		List<String> totalArgList = af.getArguments().stream().map(s -> s.getLabel()).collect(Collectors.toList());
 		for (Candidate cand : candidates) {
-			callables.add(prepareCallables(cand, af, new ArrayList<>(cand.getUndecArguments()).get(0)));
+			callables.add(prepareCallables(cand, af, new ArrayList<>(cand.getUndecArguments()).get(0), totalArgList));
 		}
 		List<Candidate> prospects = performTask(callables, EXECUTOR);
 		for (Candidate cand : prospects) {
@@ -225,8 +227,9 @@ public class ComputeExtensions implements Runnable {
 		return results;
 	}
 
-	private Callable<List<Candidate>> prepareCallables(Candidate candidate, ArgumentFramework af, String argument) {
-		return new ComputeCandidate(argument, af.getAttackRelation(), candidate);
+	private Callable<List<Candidate>> prepareCallables(Candidate candidate, ArgumentFramework af, String argument,
+			List<String> argList) {
+		return new ComputeCandidate(argument, af.getAttackRelation(), candidate, argList);
 	}
 
 	@MessageMapping("/topic")

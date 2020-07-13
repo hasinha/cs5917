@@ -1,6 +1,7 @@
 package com.sinha.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,10 +24,14 @@ public class ComputeCandidate implements Callable<List<Candidate>> {
 
 	private String argToAdd;
 
-	public ComputeCandidate(String argument, List<AttackRelation> attacks, Candidate candidate) {
+	private List<String> argumentsComp;
+
+	public ComputeCandidate(String argument, List<AttackRelation> attacks, Candidate candidate,
+			List<String> argumentsComp) {
 		this.argToAdd = argument;
 		this.attacks = attacks;
 		this.candidate = candidate;
+		this.argumentsComp = argumentsComp;
 	}
 
 	@Override
@@ -36,8 +41,64 @@ public class ComputeCandidate implements Callable<List<Candidate>> {
 		if (checkForAddition()) {
 			candidates.add(argumentAddition());
 		}
-		candidates.add(argumentRemoval());
+		if (checkForRemoval()) {
+			candidates.add(argumentRemoval());
+		}
 		return candidates;
+	}
+
+	private List<String> attackedArgsInSet(Set<String> setArgs) {
+		if (CollectionUtils.isEmpty(setArgs)) {
+			return Collections.emptyList();
+		}
+		List<String> returnVal = new ArrayList<>();
+		for (AttackRelation attack : this.attacks) {
+			if (setArgs.containsAll(attack.getAttackMembers())) {
+				returnVal.add(attack.getAttacked().getLabel());
+			}
+		}
+		return returnVal;
+	}
+
+	private Set<String> selfAttArgs(Set<String> args) {
+		Set<String> selfAttArgs = new HashSet<>();
+		for (String arg : args) {
+			for (AttackRelation attack : attacks) {
+				if (attack.getAttacked().getLabel().equals(arg)) {
+					List<String> tempList = new ArrayList<>(argumentsComp);
+					tempList.removeAll(attack.getAttackMembers());
+					selfAttArgs.addAll(tempList);
+				}
+			}
+		}
+		return selfAttArgs;
+	}
+
+	private boolean checkForRemoval() {
+		List<String> cond1Args = new ArrayList<>();
+		boolean cond1 = false;
+		for (AttackRelation relation : this.attacks) {
+			if (relation.getAttacked().getLabel().equals(this.argToAdd)) {
+				cond1Args.addAll(relation.getAttackMembers());
+			}
+		}
+		List<String> attackedArgsIn = attackedArgsInSet(this.candidate.getInArguments());
+		cond1 = Collections.disjoint(cond1Args, attackedArgsIn);
+
+		boolean cond2 = false;
+		Set<String> tempList = new HashSet<>(candidate.getInArguments());
+		tempList.addAll(candidate.getUndecArguments());
+
+		List<String> attackedCond2 = attackedArgsInSet(tempList);
+		cond2 = attackedCond2.contains(argToAdd);
+
+		boolean cond3 = false;
+		tempList = new HashSet<>(candidate.getInArguments());
+		tempList.addAll(candidate.getUndecArguments());
+		tempList.remove(argToAdd);
+		Set<String> selfAttArgs = selfAttArgs(tempList);
+		cond3 = selfAttArgs.contains(argToAdd);
+		return cond1 && cond2 && cond3;
 	}
 
 	private boolean checkForAddition() {
