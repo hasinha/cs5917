@@ -41,7 +41,7 @@ public class ComputeCandidate implements Callable<List<Candidate>> {
 		if (checkForAddition()) {
 			candidates.add(argumentAddition());
 		}
-		if (checkForRemoval()) {
+		if (!checkForRemoval()) {
 			candidates.add(argumentRemoval());
 		}
 		return candidates;
@@ -83,22 +83,22 @@ public class ComputeCandidate implements Callable<List<Candidate>> {
 			}
 		}
 		List<String> attackedArgsIn = attackedArgsInSet(this.candidate.getInArguments());
-		cond1 = Collections.disjoint(cond1Args, attackedArgsIn);
+		cond1 = !Collections.disjoint(cond1Args, attackedArgsIn);
 
 		boolean cond2 = false;
 		Set<String> tempList = new HashSet<>(candidate.getInArguments());
 		tempList.addAll(candidate.getUndecArguments());
 
 		List<String> attackedCond2 = attackedArgsInSet(tempList);
-		cond2 = attackedCond2.contains(argToAdd);
+		cond2 = !attackedCond2.contains(argToAdd);
 
 		boolean cond3 = false;
 		tempList = new HashSet<>(candidate.getInArguments());
 		tempList.addAll(candidate.getUndecArguments());
 		tempList.remove(argToAdd);
 		Set<String> selfAttArgs = selfAttArgs(tempList);
-		cond3 = selfAttArgs.contains(argToAdd);
-		return cond1 && cond2 && cond3;
+		cond3 = !selfAttArgs.contains(argToAdd);
+		return cond1 || cond2 || cond3;
 	}
 
 	private boolean checkForAddition() {

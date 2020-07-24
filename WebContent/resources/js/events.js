@@ -1,6 +1,7 @@
 var initDone = false, uid;
 
 	function populateAttacks(attacks){
+		var mainLabel = $('<label>').text('Attacks');
 		var attacksTable = $('<table>');
 		var row = $('<tr>');
 		var labelTh = $('<th>').text('Attack Label');
@@ -16,7 +17,7 @@ var initDone = false, uid;
 			newRow.append(labelTd).append(memberTd).append(attackedTd);
 			attacksTable.append(newRow);
 		})
-		$('#attacksTable').append(attacksTable);
+		$('#attacksTable').append(mainLabel).append(attacksTable);
 		$('.attClick').click(function(){
 			highlightAttack(this);
 			$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
@@ -25,22 +26,27 @@ var initDone = false, uid;
 	}
 	
 	function populateExtensions(candidates){
+		var mainLabel = $('<label>').text('Attacks');
 		var extensionsTable = $('<table>');
 		var row = $('<tr>');
+		var rankTh = $('<th>').text('Rank');
 		var inTh = $('<th>').text('IN');
 		var outTh = $('<th>').text('OUT');
 		var undecTh = $('<th>').text('UNDEC');
-		row.append(inTh).append(outTh).append(undecTh);
+		row.append(rankTh).append(inTh).append(outTh).append(undecTh);
 		extensionsTable.append(row)
+		var i = 1;
 		$.each(candidates, function(index, value){
 			var newRow = $('<tr>').attr('class', 'extClick');
+			var rankTd = $('<td>').text(i);
 			var inTd = $('<td>').text(value.inArguments).attr('class', 'inArg');
 			var outTd = $('<td>').text(value.outArguments).attr('class', 'outArg');
 			var undecTd = $('<td>').text(value.undecArguments).attr('class', 'undecArg');
-			newRow.append(inTd).append(outTd).append(undecTd);
+			newRow.append(rankTd).append(inTd).append(outTd).append(undecTd);
 			extensionsTable.append(newRow);
+			i++;
 		});
-		$('#extensionsTable').append(extensionsTable);
+		$('#extensionsTable').append(mainLabel).append(extensionsTable);
 		$('.extClick').click(function(){
 			highlightExtension(this);
 			$('.extClick td.inArg, .argClick, .attClick').css('background-color', '#e5e5e5');
@@ -83,8 +89,10 @@ function populateThings(data){
 					i++;
 				})
 				var label = $('#rankingSemantic>option:selected').text();
-				$("#rankTable").append(rankingTable);
-				$('#argumentTable').append(argumentsTable);
+				var mainLabel = $('<label>').text('Rankings');
+				$("#rankTable").append(mainLabel).append(rankingTable);
+				var argLabel = $('<label>').text('Arguments');
+				$('#argumentTable').append(argLabel).append(argumentsTable);
 				$('.argClick').click(function(){
 					highlightNode(this);
 					$('.argClick, .attClick, td.inArg').css('background-color', '#e5e5e5');
@@ -98,15 +106,19 @@ function populateThings(data){
 				$("#buttonDiv").slideDown('fast');
 				if(!initDone){ 
 					$("#showRankings").click(function(){
+						$(this).toggleClass('highlight');
 						$("#rankTable").slideToggle('fast');
 					})
 					$("#showArguments").click(function(){
+						$(this).toggleClass('highlight');
 						$("#argumentTable").slideToggle('fast');
 					})
 					$("#showAttacks").click(function(){
+						$(this).toggleClass('highlight');
 						$("#attacksTable").slideToggle('fast');
 					})
 					$("#showExtensions").click(function(){
+						$(this).toggleClass('highlight');
 						$("#extensionsTable").slideToggle('fast');
 					})
 				}
@@ -161,7 +173,7 @@ $(document).ready(function(){
 	       },
 			error: function(xhr, status, error){
 				$.unblockUI();
-				alert('Error occured');
+				alert(xhr.responseText);
 			}	
 		});
 	});

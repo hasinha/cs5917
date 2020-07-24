@@ -1,5 +1,9 @@
 package com.sinha.model;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Argument {
 
 	private String label;
@@ -9,6 +13,8 @@ public class Argument {
 	private float newStrengthValue;
 
 	private String pathCountStr;
+
+	private int rank;
 
 	public Argument(String label) {
 		this.label = label;
@@ -44,6 +50,14 @@ public class Argument {
 
 	public void setPathCountStr(String pathCountStr) {
 		this.pathCountStr = pathCountStr;
+	}
+
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
 	}
 
 	@Override

@@ -45,17 +45,21 @@ public class RestController {
 			HttpServletResponse response) throws Exception {
 
 		List<String> lines = new ArrayList<>();
+		ArgumentFramework af = null;
 		if (file.isEmpty()) {
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-			return "Failed";
+			return "No file or Empty file input";
 		}
 		try {
 			parseFile(file, response, lines);
+			af = ArgumentUtils.parseArguments(lines);
 		} catch (Exception e) {
-			return e.getMessage();
+			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+			return "Input file could not be parsed. Please check input and try again.";
 		}
-		ArgumentFramework af = ArgumentUtils.parseArguments(lines);
+		long startTime = System.currentTimeMillis();
 		serviceFactory.getRankingSemantic(rankingSemantic).generateRanks(af);
+		logger.info("Time taken: {}", (System.currentTimeMillis() - startTime));
 		serviceFactory.getReasoningSemantic(extensionSemantic).generateLabelings(af, uid);
 //		ObjectMapper om = new ObjectMapper();
 		response.setStatus(HttpStatus.CREATED.value());

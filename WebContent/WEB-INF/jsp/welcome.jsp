@@ -19,6 +19,20 @@ table, td, th {
 .dispTable {
 	margin-top: 20px;
 }
+
+.btn {
+	background-color: #4CAF50;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+}
+
+.btn.highlight {
+	background-color: #FB4D4F;
+	color: white;
+	text-align: center;
+	text-decoration: none;
+}
 </style>
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -64,13 +78,14 @@ table, td, th {
 			<div
 				style="margin-top: 20px; overflow: auto; width: 396px; height: 865px; display: table-cell; float: left"
 				hidden="true" id="buttonDiv">
-				<input id="showRankings" class="showRankings" value="Rankings"
+				<input id="showRankings" class="showRankings btn" value="Rankings"
 					type="button"> <input id="showArguments"
-					class="showArguments" style="margin-left: 20px" value="Arguments"
-					type="button"> <input id="showAttacks" class="showAttacks"
-					style="margin-left: 20px" type="button" value="Attacks"> <input
-					id="showExtensions" type="button" class="showExtensions"
-					style="margin-left: 20px" value="Extensions">
+					class="showArguments btn" style="margin-left: 20px"
+					value="Arguments" type="button"> <input id="showAttacks"
+					class="showAttacks btn" style="margin-left: 20px" type="button"
+					value="Attacks"> <input id="showExtensions" type="button"
+					class="showExtensions btn" style="margin-left: 20px"
+					value="Extensions">
 				<div id="rankTable" hidden="true" class="dispTable"></div>
 				<div id='argumentTable' hidden="true" class="dispTable"></div>
 				<div id='attacksTable' hidden="true" class="dispTable"></div>

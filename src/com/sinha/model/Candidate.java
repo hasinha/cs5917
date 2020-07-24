@@ -11,6 +11,8 @@ public class Candidate {
 
 	private Set<String> undecArguments = new HashSet<>();
 
+	private String inArgRanks = "";
+
 	public Set<String> getInArguments() {
 		return inArguments;
 	}
@@ -33,6 +35,14 @@ public class Candidate {
 
 	public void setUndecArguments(Set<String> undecArguments) {
 		this.undecArguments = undecArguments;
+	}
+
+	public String getInArgRanks() {
+		return inArgRanks;
+	}
+
+	public void setInArgRanks(String inArgRanks) {
+		this.inArgRanks = inArgRanks;
 	}
 
 	public Candidate clone() {
@@ -103,4 +113,5 @@ public class Candidate {
 		return "Candidate [inArguments=" + inArguments + ", outArguments=" + outArguments + ", undecArguments="
 				+ undecArguments + "]";
 	}
+
 }

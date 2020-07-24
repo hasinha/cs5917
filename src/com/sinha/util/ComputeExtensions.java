@@ -2,8 +2,10 @@ package com.sinha.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -11,12 +13,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.util.CollectionUtils;
 
+import com.sinha.model.Argument;
 import com.sinha.model.ArgumentFramework;
 import com.sinha.model.AttackRelation;
 import com.sinha.model.Candidate;
@@ -56,13 +60,37 @@ public class ComputeExtensions implements Runnable {
 			for (Candidate cand : candidatesToRemove) {
 				finalResults.remove(cand);
 			}
-			af.setCandidates(new ArrayList<>(finalResults));
+			List<Candidate> sortedResults = populateCandidateArguments(new ArrayList<>(finalResults), af);
+			af.setCandidates(sortedResults);
 			sendSpecific(af, this.userId);
 		} catch (Exception e) {
 			logger.error("Exception: ", e);
 		}
 		long endTime = System.currentTimeMillis();
 		logger.info("Time taken: {}", (endTime - startTime));
+	}
+
+	private List<Candidate> populateCandidateArguments(List<Candidate> results, ArgumentFramework af) {
+		List<Argument> argsList = new ArrayList<>(af.getArguments());
+		int i = 1;
+		for (Argument arg : argsList) {
+			arg.setRank(i);
+			i++;
+		}
+		Map<String, Argument> argMap = argsList.stream().collect(Collectors.toMap(Argument::getLabel, arg -> arg));
+		for (Candidate candidate : results) {
+			List<Integer> tempList = new ArrayList<>();
+			if (CollectionUtils.isEmpty(candidate.getInArguments())) {
+				continue;
+			}
+			for (String arg : candidate.getInArguments()) {
+				tempList.add(argMap.get(arg).getRank());
+			}
+			Collections.sort(tempList);
+			candidate.setInArgRanks(StringUtils.join(tempList, ","));
+		}
+		Collections.sort(results, new CandidateLexComparator());
+		return results;
 	}
 
 	private void computeCandidates(List<Candidate> candidates, ArgumentFramework af, Set<Candidate> finalResults)
