@@ -22,7 +22,9 @@ public class MinBurdenSemantic implements RankingSemantic {
 
 	private static final Logger logger = LoggerFactory.getLogger(MinBurdenSemantic.class);
 
-	private static final int MAX_STEPS = 5;
+	private static final int MAX_STEPS = 10;
+
+	private static final float MAX_DIFF = 0.01f;
 
 	@Override
 	public void generateRanks(ArgumentFramework af) {
@@ -31,6 +33,7 @@ public class MinBurdenSemantic implements RankingSemantic {
 		initializeBurdens(af.getArguments(), argumentBurdens);
 		int i = 1;
 		while (i < MAX_STEPS) {
+			boolean isPrecAchieved = Boolean.TRUE;
 			for (Argument arg : af.getArguments()) {
 				float sum = 0f;
 				boolean attacked = false;
@@ -50,9 +53,15 @@ public class MinBurdenSemantic implements RankingSemantic {
 					argumentBurdens.get(arg).add(String.valueOf(1f));
 					arg.setNewStrengthValue(1f);
 				}
+				if (isPrecAchieved) {
+					isPrecAchieved = Math.abs(arg.getNewStrengthValue() - arg.getStrengthValue()) < MAX_DIFF;
+				}
 			}
 			for (Argument arg : af.getArguments()) {
 				arg.setStrengthValue(arg.getNewStrengthValue());
+			}
+			if (isPrecAchieved) {
+				break;
 			}
 			i++;
 		}

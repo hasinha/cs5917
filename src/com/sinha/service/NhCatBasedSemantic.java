@@ -18,7 +18,9 @@ public class NhCatBasedSemantic implements RankingSemantic {
 
 	private static final Logger logger = LoggerFactory.getLogger(NhCatBasedSemantic.class);
 
-	private static final int MAX_CYCLES = 20;
+	private static final int MAX_CYCLES = 50;
+
+	private static final float MAX_DIFF = 0.01f;
 
 	@Override
 	public void generateRanks(ArgumentFramework af) {
@@ -26,12 +28,19 @@ public class NhCatBasedSemantic implements RankingSemantic {
 		initializeStrengths(af.getArguments());
 		int i = 0;
 		while (i < MAX_CYCLES) {
+			boolean isPrecAchieved = Boolean.TRUE;
 			i++;
 			for (Argument arg : af.getArguments()) {
 				newStrength(arg, af.getAttackRelation());
+				if (isPrecAchieved) {
+					isPrecAchieved = Math.abs(arg.getNewStrengthValue() - arg.getStrengthValue()) < MAX_DIFF;
+				}
 			}
 			for (Argument arg : af.getArguments()) {
 				arg.setStrengthValue(arg.getNewStrengthValue());
+			}
+			if (isPrecAchieved) {
+				break;
 			}
 		}
 		Collections.sort(af.getArguments(), new FloatComparator());

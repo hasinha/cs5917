@@ -3,8 +3,10 @@ package com.sinha.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,7 +23,7 @@ public class DiscussionBasedSemantic implements RankingSemantic {
 
 	private static final Logger logger = LoggerFactory.getLogger(DiscussionBasedSemantic.class);
 
-	private static final int MAX_STEPS = 5;
+	private static final int MAX_STEPS = 10;
 
 	@Override
 	public void generateRanks(ArgumentFramework af) {
@@ -29,6 +31,7 @@ public class DiscussionBasedSemantic implements RankingSemantic {
 		int i = 0;
 		Map<Argument, List<String>> argPathLengths = new HashMap<>();
 		while (i < MAX_STEPS) {
+			Set<String> uniqueSet = new HashSet<>();
 			for (Argument arg : af.getArguments()) {
 				if (!argPathLengths.containsKey(arg)) {
 					argPathLengths.put(arg, new ArrayList<>());
@@ -38,6 +41,10 @@ public class DiscussionBasedSemantic implements RankingSemantic {
 					pathLength = -1 * pathLength;
 				}
 				argPathLengths.get(arg).add(String.valueOf(pathLength));
+				uniqueSet.add(String.valueOf(pathLength));
+			}
+			if (uniqueSet.size() == af.getArguments().size()) {
+				break;
 			}
 			i++;
 		}

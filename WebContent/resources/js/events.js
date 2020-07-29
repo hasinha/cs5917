@@ -26,7 +26,7 @@ var initDone = false, uid;
 	}
 	
 	function populateExtensions(candidates){
-		var mainLabel = $('<label>').text('Attacks');
+		var mainLabel = $('<label>').text('Extensions');
 		var extensionsTable = $('<table>');
 		var row = $('<tr>');
 		var rankTh = $('<th>').text('Rank');
