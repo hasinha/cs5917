@@ -145,7 +145,8 @@ dt {
 			href="https://www.dbai.tuwien.ac.at/research/argumentation/aspartix/"
 			target="_blank">ASPARTIX Input Format</a> <a href="welcome.html"
 			target="_blank">Demo</a><a href="https://github.com/hasinha/cs5917"
-			target="_blank">GitHub</a>
+			target="_blank">GitHub</a><a
+			href="https://forms.gle/dYWHHoXiVPVq3Hi67" target="_blank">Feedback</a>
 	</div>
 </body>
 </html>

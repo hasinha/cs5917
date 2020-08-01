@@ -72,24 +72,34 @@ table, td, th {
 			style="width: 40px"><label style="margin-left: 20px">Canvas
 			Height: </label> <input type="text" id="canvasHeight" style="width: 40px">
 	</div>
-	<div style='width: 1676px; overflow: auto; display: inline-block'
+	<div style='width: 1920px; overflow: auto; display: inline-block'
 		id="mainDiv">
 		<div style='display: table-row; overflow: auto'>
 			<div
-				style="margin-top: 20px; overflow: auto; width: 396px; height: 865px; display: table-cell; float: left"
+				style="margin-top: 20px; overflow: auto; width: 580px; height: 865px; display: table-cell; float: left"
 				hidden="true" id="buttonDiv">
-				<input id="showRankings" class="showRankings btn" value="Rankings"
-					type="button"> <input id="showArguments"
-					class="showArguments btn" style="margin-left: 20px"
-					value="Arguments" type="button"> <input id="showAttacks"
-					class="showAttacks btn" style="margin-left: 20px" type="button"
-					value="Attacks"> <input id="showExtensions" type="button"
-					class="showExtensions btn" style="margin-left: 20px"
-					value="Extensions">
-				<div id="rankTable" hidden="true" class="dispTable"></div>
-				<div id='argumentTable' hidden="true" class="dispTable"></div>
-				<div id='attacksTable' hidden="true" class="dispTable"></div>
-				<div id="extensionsTable" hidden="true" class="dispTable"></div>
+				<div id="imgDiv" style="height: 171px">
+					<img id="meanBurden" src="./resources/images/abbF.png"
+						hidden="true"> <img id="discussion"
+						src="./resources/images/dbF.png" hidden="true"><img
+						id="minBurden" src="./resources/images/mbbF.png" hidden="true"><img
+						id="meanCat" src="./resources/images/meanCatF.png" hidden="true"><img
+						id="nhCat" src="./resources/images/nhCat.png">
+				</div>
+				<div>
+					<input id="showRankings" class="showRankings btn" value="Rankings"
+						type="button"> <input id="showArguments"
+						class="showArguments btn" style="margin-left: 20px"
+						value="Arguments" type="button"> <input id="showAttacks"
+						class="showAttacks btn" style="margin-left: 20px" type="button"
+						value="Attacks"> <input id="showExtensions" type="button"
+						class="showExtensions btn" style="margin-left: 20px"
+						value="Extensions">
+					<div id="rankTable" hidden="true" class="dispTable"></div>
+					<div id='argumentTable' hidden="true" class="dispTable"></div>
+					<div id='attacksTable' hidden="true" class="dispTable"></div>
+					<div id="extensionsTable" hidden="true" class="dispTable"></div>
+				</div>
 			</div>
 			<div style='display: table-cell; float: left; overflow: auto'>
 				<canvas id="sitemap" width="1280" height="720"></canvas>

@@ -142,6 +142,12 @@ $(document).ready(function(){
                     });
                 });
 	})
+	
+	$("#rankingSemantic").change(function(){
+		$("#imgDiv>img").attr("hidden", true);
+		var chosen = $(this).val();
+		$("#" + chosen).attr("hidden", false);
+	})
 
 	$('#canvasWidth').val($('#sitemap').attr('width'));
 	$('#canvasHeight').val($('#sitemap').attr('height'));
@@ -180,7 +186,7 @@ $(document).ready(function(){
 	
 	$("#canvasWidth").on('change', function(){
 		$("#sitemap").attr('width', $("#canvasWidth").val());
-		$("#mainDiv").css('width', parseInt($(this).val()) + 400);
+		$("#mainDiv").css('width', parseInt($(this).val()) + 580);
 	})
 	
 	$("#canvasHeight").on('change', function(){
