@@ -41,11 +41,15 @@ public class ComputeExtensions implements Runnable {
 
 	private Candidate admissibileSet = null;
 
-	public ComputeExtensions(ArgumentFramework af, Candidate candidate, SimpMessagingTemplate template, String userId) {
+	private boolean genExt;
+
+	public ComputeExtensions(ArgumentFramework af, Candidate candidate, SimpMessagingTemplate template, String userId,
+			boolean genExt) {
 		this.af = af;
 		this.candidate = candidate;
 		this.template = template;
 		this.userId = userId;
+		this.genExt = genExt;
 	}
 
 	@Override
@@ -53,6 +57,10 @@ public class ComputeExtensions implements Runnable {
 		long startTime = System.currentTimeMillis();
 		Set<Candidate> finalResults = new HashSet<>();
 		finalResults.add(candidate);
+		if (!this.genExt) {
+			sendSpecific(af, userId);
+			return;
+		}
 		try {
 			computeCandidates(new ArrayList<>(Arrays.asList(candidate)), af, finalResults);
 			List<Candidate> candidatesToRemove = getCandidatesToRemove(finalResults);

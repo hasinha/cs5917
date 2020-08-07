@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,10 @@ public class RestController {
 			HttpServletResponse response) throws Exception {
 
 		List<String> lines = new ArrayList<>();
+		boolean genExt = StringUtils.isNotBlank(extensionSemantic);
+		if (!genExt) {
+			extensionSemantic = "prefExt";
+		}
 		ArgumentFramework af = null;
 		if (file.isEmpty()) {
 			response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
@@ -60,7 +65,7 @@ public class RestController {
 		long startTime = System.currentTimeMillis();
 		serviceFactory.getRankingSemantic(rankingSemantic).generateRanks(af);
 		logger.info("Time taken: {}", (System.currentTimeMillis() - startTime));
-		serviceFactory.getReasoningSemantic(extensionSemantic).generateLabelings(af, uid);
+		serviceFactory.getReasoningSemantic(extensionSemantic).generateLabelings(af, uid, genExt);
 //		ObjectMapper om = new ObjectMapper();
 		response.setStatus(HttpStatus.CREATED.value());
 		return "success";

@@ -27,12 +27,12 @@ public class PreferredSemantic implements ReasoningSemantic {
 	private SimpMessagingTemplate template;
 
 	@Override
-	public void generateLabelings(ArgumentFramework af, String uid) throws Exception {
+	public void generateLabelings(ArgumentFramework af, String uid, boolean genExt) throws Exception {
 		logger.info("Generating Preferred Extensions");
 		List<String> argList = af.getArguments().stream().map(s -> s.getLabel()).collect(Collectors.toList());
 		Candidate candidate = new Candidate();
 		candidate.setUndecArguments(new HashSet<>(argList));
-		Runnable run = new ComputeExtensions(af, candidate, template, uid);
+		Runnable run = new ComputeExtensions(af, candidate, template, uid, genExt);
 		EXECUTOR.execute(run);
 		return;
 	}

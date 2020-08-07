@@ -64,7 +64,8 @@ table, td, th {
 			<option value="meanCat">Mean Categoriser</option></select> <label
 			style="margin-left: 75px">Select Extension Semantic</label> &nbsp <select
 			id="extensionSemantic" name="extensionSemantic"><option
-				value="prefExt">Preferred Extensions</option></select> &nbsp <input
+				value="">Select</option>
+			<option value="prefExt">Preferred Extensions</option></select> &nbsp <input
 			type="submit" value="Submit" style="margin-left: 75px">
 	</form>
 	<div>

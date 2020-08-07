@@ -99,7 +99,12 @@ function populateThings(data){
 					$(this).css('background-color', 'red');
 				});
 				populateAttacks(dataO.attackRelation);
-				populateExtensions(dataO.candidates);
+				if(dataO.candidates){
+					$("#showExtensions").attr("hidden", false);
+					populateExtensions(dataO.candidates);
+				}else{
+					$("#showExtensions").attr("hidden", true);
+				}
 				
 				generate(dataO);
 				
